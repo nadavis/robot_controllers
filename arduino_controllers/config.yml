@@ -1,31 +1,24 @@
 arduino:
   msg_buff: 9600
-  #port: /dev/cu.usbmodem1433201
-  port: /dev/cu.usbmodem141201
+  port: /dev/cu.usbmodem1433301
+  #port: /dev/cu.usbmodem141201
   sleep_msg: 50
-servo_joint_limit:
-  home:
-  - '1400'
-  - '2000'
-  - '1550'
-  - '1500'
-  - '1850'
-  - '800'
-  max:
-  - '2400'
-  - '2400'
-  - '1950'
-  - '2500'
-  - '2500'
-  - '1700'
-  min:
-  - '600'
-  - '1500'
-  - '1150'
-  - '500'
-  - '800'
-  - '800'
+servo_spec:
+  home: [ 1400, 2000, 1530, 1500, 1850, 800 ]
+  max: [ 2400, 2400, 1950, 2500, 2500, 1700 ]
+  min: [ 600, 1500, 1150, 500, 800, 800 ]
+  pwm_min: [600, 600, 600, 500, 500, 500]
+  pwm_max: [2400, 2400, 2400, 2500, 2500, 2500]
+  angel_max: [2826, 2826, 2826, 900, 300, 180]
+  gear_ratio: [9, 7, 5, 4, 2, 1]
+  servo_direction: [-1, -1, 1, 1, -1, 1]
 video_stream:
   camera_id: 1
   fps: 10
   time_msg_interval: 1.0
+kinematics:
+  link_size: [7.3, 13.8, 13.5, 0, 0, 4.9, 20.0]
+  theta0: [0, 90, 0, 0, 0]
+  z_limit: 12
+
+

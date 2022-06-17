@@ -10,7 +10,7 @@ class ParamsManger:
         container.rowconfigure(0, weight=1)
         self.container = container
         self.arduino_msg = arduino_msg
-        lst = config['servo_joint_limit']['min']
+        lst = config['servo_spec']['min']
         self.num_of_joint = len(lst)
 
         root = tk.Frame(container)
@@ -27,9 +27,9 @@ class ParamsManger:
         for i in range(0, self.num_of_joint):
             tk.Label(root, text=('Joint',i+1)).grid(column=0, row=i+1)
 
-        self.min_serov_str_list = self.setServoParams(root, 1, config['servo_joint_limit']['min'])
-        self.max_serov_str_list = self.setServoParams(root, 2, config['servo_joint_limit']['max'])
-        self.home_serov_str_list = self.setServoParams(root, 3, config['servo_joint_limit']['home'])
+        self.min_serov_str_list = self.setServoParams(root, 1, config['servo_spec']['min'])
+        self.max_serov_str_list = self.setServoParams(root, 2, config['servo_spec']['max'])
+        self.home_serov_str_list = self.setServoParams(root, 3, config['servo_spec']['home'])
 
     def setServoParams(self, root, ind, lst):
         _str_list = []

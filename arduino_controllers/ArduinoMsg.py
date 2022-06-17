@@ -23,6 +23,12 @@ class ArduinoMsg:
         except:
             print("Error: Arduino serial cannt find a port")
 
+    def send_msg_by_values(self, ind, val):
+        msg = ('run:' + str(ind) + ':' + str(round(val)))
+        time.sleep(0.1)
+        print(msg)
+        self.sendToArduino(msg)
+
     def sendToArduino(self, stringToSend):
         stringWithMarkers = (self.startMarker)
         stringWithMarkers += stringToSend

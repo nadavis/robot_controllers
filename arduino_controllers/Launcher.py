@@ -30,10 +30,10 @@ class App(tk.Tk):
         notebook.rowconfigure(0, weight=1)
         notebook.pack(expand=1, fill="both")
 
-        time_msg_interval = 1.0
-        msg_buff = 9600
+        time_msg_interval = self.config['video_stream']['time_msg_interval'] #'1.0
+        msg_buff = self.config['arduino']['msg_buff'] #'9600
         #port = '/dev/cu.usbmodem1433201'
-        port = '/dev/cu.usbmodem141201'
+        port = self.config['arduino']['port'] #'/dev/cu.usbmodem141201'
         sleep_msg = 0.001
 
 

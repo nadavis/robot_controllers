@@ -73,7 +73,8 @@ class ControlPannel():
             await asyncio.sleep(interval, True)
 
     def runRandom(self):
-        self.arduino_msg.sendToArduino('runrnd:')
+        self.sliders_tab_ui.sliders_set_rand_values()
+        # self.arduino_msg.sendToArduino('runrnd:')
         print('runrnd:')
 
     def runSpan(self):
@@ -82,7 +83,7 @@ class ControlPannel():
 
     def runHome(self):
         self.sliders_tab_ui.sliders_set_home_values()
-        self.arduino_msg.sendToArduino('runh:')
+        # self.arduino_msg.sendToArduino('runh:')
         print('runh:')
 
     def runSqueeze(self):
@@ -91,13 +92,13 @@ class ControlPannel():
 
     def runMin(self):
         self.sliders_tab_ui.sliders_set_min_values()
-        self.arduino_msg.sendToArduino('runmin:')
+        # self.arduino_msg.sendToArduino('runmin:')
         print('run min:')
 
     def runMax(self):
         self.sliders_tab_ui.sliders_set_max_values()
-        self.arduino_msg.sendToArduino('runmax:')
-        print('run min:')
+        # self.arduino_msg.sendToArduino('runmax:')
+        print('run max:')
 
     def createButton(self):
         self.frame_cp.columnconfigure(0, weight=1)
