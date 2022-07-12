@@ -1,7 +1,10 @@
 import tkinter as tk
 import time
 import random
-from kinematics import Kinematics
+import sys
+# from kinematics import Kinematics
+sys.path.append('../../kinematics')
+from ArmKinematics import ArmKinematics
 
 class SliderFrame:
     def __init__(self, kinematics, container, arduino_msg, motor_name, grid_column_pos, grid_row_pos,
@@ -84,7 +87,7 @@ class SliderFrame:
 
     def is_collision(self, theta, motor_ind):
         theta = abs(theta)
-        print('Theta:', theta, motor_ind)
+        #print('Theta:', theta, motor_ind)
         self.kinematics.set_theta_by_motor_ind(theta, motor_ind)
         return self.kinematics.check_collision_by_theta()
 
@@ -96,9 +99,7 @@ class SliderFrame:
         self.send_msg(motor_ind, self.angel_2_pwm(self.current_value.get()))
 
     def send_msg(self, ind, val):
-        if(self.is_collision(self.pwm_2_angel(val), ind)):
-            print("Collision")
-        else:
+        if not (self.is_collision(self.pwm_2_angel(val), ind)):
             self.arduino_msg.send_msg_by_values(ind, val)
         # self.msg = ('run:' + str(ind) + ':' + str(round(val)))
         # time.sleep(0.1)
@@ -111,7 +112,7 @@ class SlidersTabUI:
         lst = config['servo_spec']['min']
         self.num_of_joint = len(lst)
         self.joint_slider = []
-        self.kinematics = Kinematics(config)
+        self.kinematics = ArmKinematics(config)#Kinematics(config)
         for i in range(0, self.num_of_joint):
             name = 'Joint' + str(i+1)
             pwm2angel = config['servo_spec']['angel_max'][i] / (config['servo_spec']['gear_ratio'][i]*(config['servo_spec']['pwm_max'][i]-config['servo_spec']['pwm_min'][i]))

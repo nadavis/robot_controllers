@@ -6,10 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="0fdf29c5-6930-4d72-a564-6ddf8305622a" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ArduinoMsg.py" beforeDir="false" afterPath="$PROJECT_DIR$/ArduinoMsg.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ControlPanel.py" beforeDir="false" afterPath="$PROJECT_DIR$/ControlPanel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Launcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/Launcher.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ParametersManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/ParametersManager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SlidersTab.py" beforeDir="false" afterPath="$PROJECT_DIR$/SlidersTab.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/config.yml" afterDir="false" />
     </list>
@@ -140,16 +136,6 @@
         </entry>
       </map>
     </option>
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/kinematics.py</url>
-          <line>34</line>
-          <option name="timeStamp" value="19" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>
