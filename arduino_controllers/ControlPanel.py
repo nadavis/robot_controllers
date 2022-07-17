@@ -7,10 +7,12 @@ class ControlPannel():
         self.frame_cp = frame_cp
         self.arduino_msg = arduino_msg
         self.config = config
+        self.buttons_width = 15
+        self.buttons_height = 5
         self.lock_gripper = tk.BooleanVar()
-        self.lock_gripper.set(False)
+        self.lock_gripper.set(config['kinematics']['lock_gripper'])
         self.enable_collision = tk.BooleanVar()
-        self.enable_collision.set(False)
+        self.enable_collision.set(config['kinematics']['enable_collision'])
         self.cmd_txt = tk.StringVar()
 
         self.createSerialCanvas()
@@ -33,14 +35,14 @@ class ControlPannel():
         self.dataFrame = tk.Frame(self.dataCanvas, bg='black')
         self.dataCanvas.create_window((10, 0), window=self.dataFrame, anchor='nw')
 
-    async def sliderCreator_(self, interval):
-        self.frame_cp.columnconfigure(0, weight=1)
-        self.frame_cp.rowconfigure(0, weight=1)
-        self.sliders_frame = tk.Frame(self.frame_cp)
-        self.sliders_frame.grid(column=0, row=0, sticky=tk.EW)
-        self.sliders_tab_ui = SlidersTabUI(self.sliders_frame, self.config, self.arduino_msg)
-        self.sliders_tab_ui.send_values_buttom()
-        await asyncio.sleep(interval, True)
+    # async def sliderCreator_(self, interval):
+    #     self.frame_cp.columnconfigure(0, weight=1)
+    #     self.frame_cp.rowconfigure(0, weight=1)
+    #     self.sliders_frame = tk.Frame(self.frame_cp)
+    #     self.sliders_frame.grid(column=0, row=0, sticky=tk.EW)
+    #     self.sliders_tab_ui = SlidersTabUI(self.sliders_frame, self.config, self.arduino_msg)
+    #     self.sliders_tab_ui.send_values_buttom()
+    #     await asyncio.sleep(interval, True)
 
     def sliderCreator(self):
         self.frame_cp.columnconfigure(0, weight=1)
@@ -104,6 +106,16 @@ class ControlPannel():
         print('enableCollision: ', self.enable_collision.get())
         self.sliders_tab_ui.sliders_set_collision_flg(self.enable_collision.get())
 
+    def openGripper(self):
+        print('openGripper')
+        # toggle_btn.config(relief="raised")
+        self.sliders_tab_ui.sliders_open_gripper()
+
+    def closeGripper(self):
+        print('closeGripper')
+        self.sliders_tab_ui.sliders_close_gripper()
+        # toggle_btn.config(relief="sunken")
+
     def runMin(self):
         self.sliders_tab_ui.sliders_set_min_values()
         # self.arduino_msg.sendToArduino('runmin:')
@@ -120,23 +132,32 @@ class ControlPannel():
         self.buttons_frame = tk.Frame(self.frame_cp)
         self.buttons_frame.grid(column=0, row=1)
 
-        rndButton = tk.Button(self.buttons_frame, text='Random', width=20, height=5, bd='10', command=self.runRandom)
+        rndButton = tk.Button(self.buttons_frame, text='Random', width=self.buttons_width, height=self.buttons_height, bd='10', command=self.runRandom)
         rndButton.grid(row=0, column=0, sticky='ns')
-        spanButton = tk.Button(self.buttons_frame, text='Span', width=20, height=5, bd='10', command=self.runSpan)
+        spanButton = tk.Button(self.buttons_frame, text='Span', width=self.buttons_width, height=self.buttons_height, bd='10', command=self.runSpan)
         spanButton.grid(row=1, column=0, sticky='ns')
-        homeButton = tk.Button(self.buttons_frame, text='Home', width=20, height=5, bd='10', command=self.runHome)
+        homeButton = tk.Button(self.buttons_frame, text='Home', width=self.buttons_width, height=self.buttons_height, bd='10', command=self.runHome)
         homeButton.grid(row=0, column=1, sticky='ns')
-        squeezeButton = tk.Button(self.buttons_frame, text='Squeeze', width=20, height=5, bd='10', command=self.runSqueeze)
+        squeezeButton = tk.Button(self.buttons_frame, text='Squeeze', width=self.buttons_width, height=self.buttons_height, bd='10', command=self.runSqueeze)
         squeezeButton.grid(row=1, column=1, sticky='ns')
 
-        spanButton = tk.Button(self.buttons_frame, text='Min', width=20, height=5, bd='10', command=self.runMin)
+        spanButton = tk.Button(self.buttons_frame, text='Min', width=self.buttons_width, height=self.buttons_height, bd='10', command=self.runMin)
         spanButton.grid(row=1, column=2, sticky='ns')
-        homeButton = tk.Button(self.buttons_frame, text='Max', width=20, height=5, bd='10', command=self.runMax)
+        homeButton = tk.Button(self.buttons_frame, text='Max', width=self.buttons_width, height=self.buttons_height, bd='10', command=self.runMax)
         homeButton.grid(row=0, column=2, sticky='ns')
 
-        collisionButton = tk.Checkbutton(self.buttons_frame, text='Enable Collision', width=20, height=5, bd='10', command=self.enableCollision,
+        gripperOpenButton = tk.Button(self.buttons_frame, text='Open Gripper', width=self.buttons_width,
+                                         height=self.buttons_height, bd='10', command=self.openGripper)
+        gripperOpenButton.grid(row=1, column=3, sticky='ns')
+
+        gripperCloseButton = tk.Button(self.buttons_frame, text='Close Gripper', width=self.buttons_width,
+                                       height=self.buttons_height, bd='10', command=self.closeGripper)
+        gripperCloseButton.grid(row=0, column=3, sticky='ns')
+
+
+        collisionButton = tk.Checkbutton(self.buttons_frame, text='Enable Collision', width=self.buttons_width, height=self.buttons_height, bd='10', command=self.enableCollision,
                                          variable=self.enable_collision, onvalue=True, offvalue=False)
-        collisionButton.grid(row=1, column=3, sticky='ns')
-        gripperButton = tk.Checkbutton(self.buttons_frame, text='Lock Gripper', width=20, height=5, bd='10', command=self.lockGripper,
+        collisionButton.grid(row=1, column=4, sticky='ns')
+        gripperButton = tk.Checkbutton(self.buttons_frame, text='Lock Gripper', width=self.buttons_width, height=self.buttons_height, bd='10', command=self.lockGripper,
                                        variable=self.lock_gripper, onvalue=True, offvalue=False)
-        gripperButton.grid(row=0, column=3, sticky='ns')
+        gripperButton.grid(row=0, column=4, sticky='ns')

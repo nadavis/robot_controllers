@@ -20,6 +20,8 @@ video_stream:
 kinematics:
   link_size: [7.3, 13.8, 13.5, 0, 0, 4.9, 20.0]
   theta0: [0, 0, 0, 0, 0]
-  z_limit: 7
+  z_limit: 9
+  enable_collision: True
+  lock_gripper: False
 
 

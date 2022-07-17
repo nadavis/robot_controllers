@@ -15,8 +15,8 @@ class SliderFrame:
                  home_motor_val, min_motor_val, max_motor_val,
                 servo_direction, pwm2angel):
         self.send_msg_arduino = arduino_msg == None
-        # self.gripper_locked = False
-        # self.enable_collision = False
+        self.gripper_locked = False
+        self.enable_collision = False
         self.plot_tools = plot_tools
         self.kinematics = kinematics
         self.current_value = tk.IntVar()
@@ -93,11 +93,19 @@ class SliderFrame:
         # print('ind:', self.grid_column_pos)
         # print('theta len:', len(self.kinematics.theta))
         theta = self.kinematics.set_theta_by_motor_ind(self.grid_column_pos, self.current_value.get())
-        pos, is_collision, H, T = self.kinematics.run_forward_kinematics()
+        theta, pos, is_collision, H, T = self.kinematics.run_forward_kinematics()
         self.plot_tools.show_kinematics(theta, H, T)
-        if(is_collision):
-            print("--- COLLISION---")
-        self.send_kinematic_angel()
+        if not is_collision:
+            print("--- SEND MSG---")
+            print('ind:', self.grid_column_pos)
+            print('theta: ', theta)
+            print('pos: ', pos)
+            self.send_kinematic_angel()
+            if (self.grid_column_pos < len(self.kinematics.theta0)):
+                self.set_value(theta[self.grid_column_pos])
+            # if (self.gripper_locked):
+            #     self.send_msg(theta[3])
+            #     self.send_msg(4, self.kinematics.theta[4])
 
     # def slider_changed(self, event):
     #     # print('slider change')
@@ -135,22 +143,29 @@ class SliderFrame:
         return self.current_value.get()
 
     def send_kinematic_angel(self):
-        # msg = ('run:' + str(motor_ind) + ':' + str(self.angel_2_pwm(self.current_value.get())))
-        # print(msg)
-        # self.arduino_msg.sendToArduino(msg)
-        # time.sleep(0.1)
-        self.send_msg(self.grid_column_pos, self.kinematics.theta[self.grid_column_pos])
+        if(self.grid_column_pos<len(self.kinematics.theta0)):
+            self.send_msg(self.grid_column_pos, self.kinematics.theta[self.grid_column_pos])
+            if (self.gripper_locked):
+                print('lock gripper msg: ', [self.kinematics.theta[3], self.kinematics.theta[4]])
+                self.send_msg(3, self.kinematics.theta[3])
+                self.send_msg(4, self.kinematics.theta[4])
+        else:
+            self.send_msg_angel(self.grid_column_pos, self.current_value.get())
 
-    def send_slider_angel(self):
-        # msg = ('run:' + str(motor_ind) + ':' + str(self.angel_2_pwm(self.current_value.get())))
-        # print(msg)
-        # self.arduino_msg.sendToArduino(msg)
-        # time.sleep(0.1)
-        self.send_msg(self.grid_column_pos, self.current_value.get())
 
-    def send_msg(self, ind, val):
+    # def send_slider_angel(self):
+    #     # msg = ('run:' + str(motor_ind) + ':' + str(self.angel_2_pwm(self.current_value.get())))
+    #     # print(msg)
+    #     # self.arduino_msg.sendToArduino(msg)
+    #     # time.sleep(0.1)
+    #     self.send_msg(self.grid_column_pos, self.current_value.get())
+    def send_msg_angel(self, ind, val):
         if self.arduino_msg != None:
             self.arduino_msg.send_msg_by_values(ind, self.angel_2_pwm(val))
+
+    def send_msg_pwd(self, ind, val):
+        if self.arduino_msg != None:
+            self.arduino_msg.send_msg_by_values(ind, val)
 
     # def set_arm_pos(self, is_collision, ind, val):
     #     if not (is_collision):
@@ -197,11 +212,13 @@ class SlidersTabUI:
                                             config['servo_spec']['servo_direction'][i],
                                             pwm2angel)
             self.joint_slider.append(slider)
+        self.sliders_set_collision_flg(config['kinematics']['enable_collision'])
+        self.sliders_set_lock_gripper(config['kinematics']['lock_gripper'])
 
-    def send_values_buttom(self):
-        b1 = tk.Button(self.tab_sliders, text='Send msg',
-                        command=lambda: self.send_sliders_values())
-        b1.grid(row=1, columnspan=6)
+    # def send_values_buttom(self):
+    #     b1 = tk.Button(self.tab_sliders, text='Send msg',
+    #                     command=lambda: self.send_sliders_values())
+    #     b1.grid(row=1, columnspan=6)
 
     def sliders_set_values(self, values):
         for i in range(0, self.num_of_joint):
@@ -210,17 +227,18 @@ class SlidersTabUI:
 
     def sliders_set_collision_flg(self, flg):
         self.kinematics.set_avoid_collision(flg)
-        # for i in range(0, self.num_of_joint):
-        #     self.joint_slider[i].enable_collision = flg
+        for i in range(0, self.num_of_joint):
+            self.joint_slider[i].enable_collision = flg
 
     def sliders_set_lock_gripper(self, flg):
         self.kinematics.set_gripper_locked(flg)
-        # for i in range(0, self.num_of_joint):
-        #     self.joint_slider[i].gripper_locked = flg
+        for i in range(0, self.num_of_joint):
+            self.joint_slider[i].gripper_locked = flg
 
     def sliders_set_home_values(self):
         # self.sliders_set_lock_gripper(False)
         # self.sliders_set_collision_flg(True)
+        self.kinematics.go_home()
         for i in range(0, self.num_of_joint):
             self.joint_slider[i].set_home_value()
 
@@ -250,6 +268,12 @@ class SlidersTabUI:
         self.joint_slider[4].set_home_value()
         self.joint_slider[5].set_home_value()
 
+    def sliders_open_gripper(self):
+        self.joint_slider[5].set_max_value()
+
+    def sliders_close_gripper(self):
+        self.joint_slider[5].set_min_value()
+
     def sliders_set_squeeze_values(self):
         # self.sliders_set_lock_gripper(False)
         # self.sliders_set_collision_flg(True)
@@ -265,15 +289,15 @@ class SlidersTabUI:
             self.joint_slider[i].set_rand_value()
         # self.show_self_kinematics()
 
-    def send_sliders_values(self):
-        for i in range(0, self.num_of_joint):
-            self.joint_slider[i].send_slider_pos()
-            #time.sleep(0.1)
+    # def send_sliders_values(self):
+    #     for i in range(0, self.num_of_joint):
+    #         self.joint_slider[i].send_slider_angel()
+    #         #time.sleep(0.1)
 
-    def show_values_buttom(self):
-        b1 = tk.Button(self.tab_sliders, text='Show',
-                        command=lambda: self.show_values())
-        b1.grid(row=1, columnspan=6)
+    # def show_values_buttom(self):
+    #     b1 = tk.Button(self.tab_sliders, text='Show',
+    #                     command=lambda: self.show_values())
+    #     b1.grid(row=1, columnspan=6)
 
     def show_values(self):
         for i in range(0, self.num_of_joint):
