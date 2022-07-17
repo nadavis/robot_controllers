@@ -3,10 +3,11 @@ arduino:
   port: /dev/cu.usbmodem1433301
   #port: /dev/cu.usbmodem141201
   sleep_msg: 50
+  enable_msg: False
 servo_spec:
-  home: [ 1400, 2000, 1530, 1500, 1850, 800 ]
+  home: [ 1400, 2000, 1530, 1500, 2000, 800 ]
   max: [ 2400, 2400, 1950, 2500, 2500, 1700 ]
-  min: [ 600, 1500, 1150, 500, 800, 800 ]
+  min: [ 600, 1500, 1150, 500, 500, 800 ]
   pwm_min: [600, 600, 600, 500, 500, 500]
   pwm_max: [2400, 2400, 2400, 2500, 2500, 2500]
   angel_max: [2826, 2826, 2826, 900, 300, 180]
@@ -19,6 +20,6 @@ video_stream:
 kinematics:
   link_size: [7.3, 13.8, 13.5, 0, 0, 4.9, 20.0]
   theta0: [0, 0, 0, 0, 0]
-  z_limit: 12
+  z_limit: 7
 
 

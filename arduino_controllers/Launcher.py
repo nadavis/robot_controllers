@@ -35,9 +35,11 @@ class App(tk.Tk):
         #port = '/dev/cu.usbmodem1433201'
         port = self.config['arduino']['port'] #'/dev/cu.usbmodem141201'
         sleep_msg = 0.001
+        enable_msg = self.config['arduino']['enable_msg']
 
-
-        self.arduino_msg = ArduinoMsg(msg_buff, port, time_msg_interval, sleep_msg)
+        self.arduino_msg = None
+        if(enable_msg):
+            self.arduino_msg = ArduinoMsg(msg_buff, port, time_msg_interval, sleep_msg)
         self.cp = ControlPannel(self.frame_cp, self.arduino_msg, self.config)
         self.pm = ParamsManger(self.frame_pm, self.arduino_msg, self.config)
 

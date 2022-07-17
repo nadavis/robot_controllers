@@ -7,6 +7,10 @@ class ControlPannel():
         self.frame_cp = frame_cp
         self.arduino_msg = arduino_msg
         self.config = config
+        self.lock_gripper = tk.BooleanVar()
+        self.lock_gripper.set(False)
+        self.enable_collision = tk.BooleanVar()
+        self.enable_collision.set(False)
         self.cmd_txt = tk.StringVar()
 
         self.createSerialCanvas()
@@ -78,7 +82,8 @@ class ControlPannel():
         print('runrnd:')
 
     def runSpan(self):
-        self.arduino_msg.sendToArduino('runs:')
+        self.sliders_tab_ui.sliders_set_span_values()
+        # self.arduino_msg.sendToArduino('runs:')
         print('runs:')
 
     def runHome(self):
@@ -87,8 +92,17 @@ class ControlPannel():
         print('runh:')
 
     def runSqueeze(self):
-        self.arduino_msg.sendToArduino('runsq:')
+        self.sliders_tab_ui.sliders_set_squeeze_values()
+        # self.arduino_msg.sendToArduino('runsq:')
         print('runsq:')
+
+    def lockGripper(self):
+        print('lockGripper: ', self.lock_gripper.get())
+        self.sliders_tab_ui.sliders_set_lock_gripper(self.lock_gripper.get())
+
+    def enableCollision(self):
+        print('enableCollision: ', self.enable_collision.get())
+        self.sliders_tab_ui.sliders_set_collision_flg(self.enable_collision.get())
 
     def runMin(self):
         self.sliders_tab_ui.sliders_set_min_values()
@@ -105,6 +119,7 @@ class ControlPannel():
         self.frame_cp.rowconfigure(1, weight=1)
         self.buttons_frame = tk.Frame(self.frame_cp)
         self.buttons_frame.grid(column=0, row=1)
+
         rndButton = tk.Button(self.buttons_frame, text='Random', width=20, height=5, bd='10', command=self.runRandom)
         rndButton.grid(row=0, column=0, sticky='ns')
         spanButton = tk.Button(self.buttons_frame, text='Span', width=20, height=5, bd='10', command=self.runSpan)
@@ -118,3 +133,10 @@ class ControlPannel():
         spanButton.grid(row=1, column=2, sticky='ns')
         homeButton = tk.Button(self.buttons_frame, text='Max', width=20, height=5, bd='10', command=self.runMax)
         homeButton.grid(row=0, column=2, sticky='ns')
+
+        collisionButton = tk.Checkbutton(self.buttons_frame, text='Enable Collision', width=20, height=5, bd='10', command=self.enableCollision,
+                                         variable=self.enable_collision, onvalue=True, offvalue=False)
+        collisionButton.grid(row=1, column=3, sticky='ns')
+        gripperButton = tk.Checkbutton(self.buttons_frame, text='Lock Gripper', width=20, height=5, bd='10', command=self.lockGripper,
+                                       variable=self.lock_gripper, onvalue=True, offvalue=False)
+        gripperButton.grid(row=0, column=3, sticky='ns')

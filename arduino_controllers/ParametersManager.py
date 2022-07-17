@@ -9,6 +9,7 @@ class ParamsManger:
         container.columnconfigure(0, weight=1)
         container.rowconfigure(0, weight=1)
         self.container = container
+        self.send_msg_arduino = arduino_msg == None
         self.arduino_msg = arduino_msg
         lst = config['servo_spec']['min']
         self.num_of_joint = len(lst)
@@ -48,18 +49,18 @@ class ParamsManger:
     def saveYml(self):
         print('saveYml')
         for i in range(0, self.num_of_joint):
-            self.config['servo_joint_limit']['home'][i] = self.home_serov_str_list[i].get()
-            self.config['servo_joint_limit']['min'][i] = self.min_serov_str_list[i].get()
-            self.config['servo_joint_limit']['max'][i] = self.max_serov_str_list[i].get()
+            self.config['servo_spec']['home'][i] = self.home_serov_str_list[i].get()
+            self.config['servo_spec']['min'][i] = self.min_serov_str_list[i].get()
+            self.config['servo_spec']['max'][i] = self.max_serov_str_list[i].get()
         with open('config.yml', 'w') as file:
             documents = yaml.dump(self.config, file)
 
     def setConfig(self):
         print('set Yml')
         for i in range(0, self.num_of_joint):
-            self.config['servo_joint_limit']['home'][i] = self.home_serov_str_list[i].get()
-            self.config['servo_joint_limit']['min'][i] = self.min_serov_str_list[i].get()
-            self.config['servo_joint_limit']['max'][i] = self.max_serov_str_list[i].get()
+            self.config['servo_spec']['home'][i] = self.home_serov_str_list[i].get()
+            self.config['servo_spec']['min'][i] = self.min_serov_str_list[i].get()
+            self.config['servo_spec']['max'][i] = self.max_serov_str_list[i].get()
         print(self.config)
 
     def sendParams(self):
@@ -72,7 +73,8 @@ class ParamsManger:
     def msgStructure(self, name, i, val):
         msg = name + ':' + str(i) + ':' + str(val)
         print(msg)
-        self.arduino_msg.sendToArduino(msg)
+        if self.send_msg_arduino:
+            self.arduino_msg.sendToArduino(msg)
         time.sleep(0.1)
 
     def createButton(self):
